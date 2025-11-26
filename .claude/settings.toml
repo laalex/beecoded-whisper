@@ -1,0 +1,83 @@
+# Claude Code Autonomous Pipeline Settings
+# ==========================================
+# Configure the behavior of the autonomous workflow engine
+
+[workflow]
+# Operating mode: "autonomous" or "assisted"
+# - autonomous: Claude executes full workflow without prompts
+# - assisted: Claude asks for confirmation at each phase
+mode = "autonomous"
+
+# TDD enforcement (strongly recommended to keep true)
+enforce_tdd = true
+
+# Maximum lines per file before auto-split is triggered
+max_file_lines = 300
+
+# Minimum test coverage percentage required
+min_coverage = 80
+
+[automation]
+# Automatically create feature specs for new features
+auto_create_specs = true
+
+# Automatically update documentation after tasks
+auto_update_docs = true
+
+# Automatically run tests after implementation
+auto_run_tests = true
+
+# Automatically run linting after code changes
+auto_lint = true
+
+# Automatically check and split large files
+auto_split_files = true
+
+[quality]
+# Run type checking for TypeScript
+typescript_strict = true
+
+# PHP static analysis level (0-9, higher = stricter)
+phpstan_level = 8
+
+# Require tests before merging
+require_tests = true
+
+# Require documentation for public APIs
+require_api_docs = true
+
+[git]
+# Auto-commit after successful task completion
+auto_commit = false
+
+# Commit message prefix
+commit_prefix = ""
+
+# Branch naming pattern
+branch_pattern = "feature/{name}"
+
+[notifications]
+# Show progress indicators during execution
+show_progress = true
+
+# Verbosity level: "minimal", "normal", "verbose"
+verbosity = "normal"
+
+[paths]
+# Feature specifications directory
+features_dir = "docs/features"
+
+# Architecture decisions directory
+decisions_dir = "docs/decisions"
+
+# API documentation directory
+api_docs_dir = "docs/api"
+
+# Backend source directory
+backend_dir = "src/backend"
+
+# Frontend source directory
+frontend_dir = "src/frontend"
+
+# Tests directory
+tests_dir = "tests"
