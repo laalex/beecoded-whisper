@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  /* Bee Coded Brand Colors */
+  --color-primary: #1a1f36;
+  --color-primary-light: #2d3452;
+  --color-primary-dark: #0f1220;
+  --color-accent: #f7e547;
+  --color-accent-hover: #e6d43d;
+  --color-background: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-border: #e5e7eb;
+  --color-text: #1a1f36;
+  --color-text-secondary: #6b7280;
+
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
