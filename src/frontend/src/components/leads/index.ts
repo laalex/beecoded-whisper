@@ -8,3 +8,4 @@ export { LeadNotes } from './LeadNotes';
 export { AddInteractionModal } from './AddInteractionModal';
 export { LeadHubSpotData } from './LeadHubSpotData';
 export { LeadAIAnalysis } from './LeadAIAnalysis';
+export { LeadHistoryAnalysis } from './LeadHistoryAnalysis';

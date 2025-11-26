@@ -12,6 +12,7 @@ import {
   AddInteractionModal,
   LeadHubSpotData,
   LeadAIAnalysis,
+  LeadHistoryAnalysis,
 } from '@/components/leads';
 import { Skeleton } from '@/components/common/Skeleton';
 import { Card, CardContent } from '@/components/common/Card';
@@ -23,6 +24,7 @@ export function LeadDetail() {
   const navigate = useNavigate();
   const {
     lead,
+    historyAnalysis,
     isLoading,
     isError,
     updateLead,
@@ -30,10 +32,12 @@ export function LeadDetail() {
     addInteraction,
     syncHubSpot,
     analyzeLead,
+    analyzeHistory,
     isUpdating,
     isAddingInteraction,
     isSyncing,
     isAnalyzing,
+    isAnalyzingHistory,
   } = useLead(id!);
 
   const [interactionModal, setInteractionModal] = useState<{
@@ -195,6 +199,14 @@ export function LeadDetail() {
             onReanalyze={analyzeLead}
             isAnalyzing={isAnalyzing}
           />
+          {isHubSpotLead && (
+            <LeadHistoryAnalysis
+              analysis={historyAnalysis}
+              onAnalyze={analyzeHistory}
+              isAnalyzing={isAnalyzingHistory}
+              hasHubSpotData={!!lead.enrichment_data?.hubspot_activities?.length}
+            />
+          )}
           <LeadTimeline interactions={lead.interactions || []} />
           <LeadNotes
             notes={lead.notes}

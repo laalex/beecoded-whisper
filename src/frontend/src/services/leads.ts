@@ -1,5 +1,13 @@
 import api from './api';
-import type { Lead, LeadStatus, Interaction, InteractionType, EnrichmentData, AiAnalysis } from '@/types';
+import type {
+  Lead,
+  LeadStatus,
+  Interaction,
+  InteractionType,
+  EnrichmentData,
+  AiAnalysis,
+  HubSpotHistoryResponse
+} from '@/types';
 
 export const leadsApi = {
   getLead: async (id: number | string): Promise<Lead> => {
@@ -47,6 +55,24 @@ export const leadsApi = {
 
   analyzeLead: async (leadId: number | string): Promise<{ analysis: AiAnalysis }> => {
     const response = await api.post(`/leads/${leadId}/analyze`);
+    return response.data;
+  },
+
+  // HubSpot History APIs
+  getHubSpotHistory: async (leadId: number | string, limit = 100): Promise<HubSpotHistoryResponse> => {
+    const response = await api.get(`/leads/${leadId}/hubspot-history`, {
+      params: { limit }
+    });
+    return response.data;
+  },
+
+  analyzeHistory: async (leadId: number | string): Promise<AiAnalysis> => {
+    const response = await api.post(`/leads/${leadId}/analyze-history`);
+    return response.data;
+  },
+
+  getHistoryAnalysis: async (leadId: number | string): Promise<AiAnalysis> => {
+    const response = await api.get(`/leads/${leadId}/history-analysis`);
     return response.data;
   },
 };

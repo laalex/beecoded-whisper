@@ -135,9 +135,12 @@ class HubSpotSyncService
     private function formatActivities(array $activities): array
     {
         return array_map(fn($a) => [
+            'id' => $a['id'] ?? null,
             'type' => $a['type'] ?? null,
-            'timestamp' => $a['timestamp'] ?? null,
-        ], array_slice($activities, 0, 10));
+            // Convert milliseconds to seconds for consistency
+            'timestamp' => isset($a['timestamp']) ? (int) ($a['timestamp'] / 1000) : null,
+            'metadata' => [], // Basic sync doesn't fetch full metadata
+        ], $activities); // Store all activities, not just 10
     }
 
     private function markSyncError(Lead $lead, string $error): ?EnrichmentData

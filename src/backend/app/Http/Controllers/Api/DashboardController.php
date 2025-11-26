@@ -29,11 +29,11 @@ class DashboardController extends Controller
         $conversionRate = $this->calculateConversionRate($user->id);
 
         $pipelineValue = Lead::where('user_id', $user->id)
-            ->whereNotIn('status', ['lost', 'converted'])
-            ->sum('value');
+            ->whereNotIn('status', ['lost', 'won'])
+            ->sum('estimated_value');
 
         $upcomingReminders = Reminder::where('user_id', $user->id)
-            ->where('is_completed', false)
+            ->whereNull('completed_at')
             ->where('due_at', '>=', now())
             ->orderBy('due_at')
             ->limit(5)
@@ -117,7 +117,7 @@ class DashboardController extends Controller
         }
 
         $convertedLeads = Lead::where('user_id', $userId)
-            ->where('status', 'converted')
+            ->where('status', 'won')
             ->count();
 
         return ($convertedLeads / $totalLeads) * 100;

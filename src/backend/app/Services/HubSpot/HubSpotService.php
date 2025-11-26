@@ -21,21 +21,42 @@ class HubSpotService
 
     private function fetchContacts(Integration $integration): array
     {
-        $response = Http::withToken($integration->access_token)
-            ->get(self::BASE_URL . '/crm/v3/objects/contacts', [
+        $allContacts = [];
+        $after = null;
+
+        do {
+            $params = [
                 'limit' => 100,
                 'properties' => ['firstname', 'lastname', 'email', 'phone', 'company', 'jobtitle', 'website'],
-            ]);
+            ];
 
-        if ($response->failed()) {
-            if ($response->status() === 401) {
-                $this->refreshToken($integration);
-                return $this->fetchContacts($integration);
+            if ($after) {
+                $params['after'] = $after;
             }
-            throw new \Exception('Failed to fetch HubSpot contacts');
-        }
 
-        return $response->json('results', []);
+            $response = Http::withToken($integration->access_token)
+                ->get(self::BASE_URL . '/crm/v3/objects/contacts', $params);
+
+            if ($response->failed()) {
+                if ($response->status() === 401) {
+                    $this->refreshToken($integration);
+                    // Reset and start over with fresh token
+                    $allContacts = [];
+                    $after = null;
+                    continue;
+                }
+                throw new \Exception('Failed to fetch HubSpot contacts: ' . $response->status());
+            }
+
+            $results = $response->json('results', []);
+            $allContacts = array_merge($allContacts, $results);
+
+            // Check for next page
+            $after = $response->json('paging.next.after');
+
+        } while ($after !== null);
+
+        return $allContacts;
     }
 
     private function createOrUpdateLead(Integration $integration, array $contact): void

@@ -221,6 +221,8 @@ Read these before any task:
 - [x] HubSpot/Gmail OAuth frontend integration
 - [x] HubSpot data auto-sync with 30-minute cache
 - [x] AI-powered lead analysis using Anthropic Claude API
+- [x] Complete HubSpot engagement history pull
+- [x] AI-powered history analysis with pattern detection, buying signals, deal prediction
 
 ### In Progress
 - [ ] Voice input functionality

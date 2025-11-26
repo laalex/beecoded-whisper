@@ -186,7 +186,7 @@ export interface HubSpotOwner {
 export interface AiAnalysis {
   id: number;
   lead_id: number;
-  analysis_type: 'full' | 'scoring' | 'nurturing' | 'sentiment';
+  analysis_type: 'full' | 'scoring' | 'nurturing' | 'sentiment' | 'history';
   insights: AiInsights | null;
   recommendations: AiRecommendation[] | null;
   risks: AiRisk[] | null;
@@ -194,6 +194,12 @@ export interface AiAnalysis {
   confidence_score: number | null;
   model_used: string;
   analyzed_at: string | null;
+}
+
+// Separate type for history analysis with different insights structure
+export interface HistoryAiAnalysis extends Omit<AiAnalysis, 'insights' | 'analysis_type'> {
+  analysis_type: 'history';
+  insights: HistoryAnalysisInsights | null;
 }
 
 export interface AiInsights {
@@ -223,9 +229,115 @@ export interface AiRisk {
 }
 
 export interface AiOpportunity {
-  type: 'upsell' | 'cross_sell' | 'referral' | 'expansion';
+  type: 'upsell' | 'cross_sell' | 'referral' | 'expansion' | 'buying_signal';
   description: string;
   potential_value: string;
+}
+
+// History Analysis Types
+export interface HistoryAnalysisInsights {
+  history_summary: HistorySummary | null;
+  communication_patterns: CommunicationPatterns | null;
+  relationship_timeline: RelationshipTimeline | null;
+  key_topics_discussed: TopicDiscussed[] | null;
+  buying_signals: BuyingSignal[] | null;
+  objections_raised: Objection[] | null;
+  deal_prediction: DealPrediction | null;
+  insights: {
+    summary: string;
+    engagement_trend: 'improving' | 'stable' | 'declining' | 'unknown';
+    notable_patterns?: string[];
+    recommended_approach?: string;
+  } | null;
+}
+
+export interface HistorySummary {
+  total_engagements: number;
+  time_span_days?: number;
+  engagement_types_breakdown?: Record<string, number>;
+  average_response_time_hours?: number | null;
+  engagement_quality?: 'high' | 'medium' | 'low' | 'minimal' | 'unknown';
+}
+
+export interface CommunicationPatterns {
+  preferred_channel: string | null;
+  most_active_day?: string | null;
+  most_active_time?: string | null;
+  response_pattern?: string | null;
+  engagement_frequency?: string | null;
+}
+
+export interface RelationshipTimeline {
+  phases: RelationshipPhase[];
+  current_phase?: string;
+  relationship_health?: 'strong' | 'good' | 'fair' | 'weak' | 'at_risk';
+}
+
+export interface RelationshipPhase {
+  period: string;
+  phase: string;
+  key_events?: string[];
+  sentiment?: 'positive' | 'neutral' | 'negative';
+}
+
+export interface TopicDiscussed {
+  topic: string;
+  frequency: number;
+  sentiment?: 'positive' | 'neutral' | 'negative';
+  last_discussed?: string;
+}
+
+export interface BuyingSignal {
+  signal: string;
+  date?: string;
+  strength: 'strong' | 'moderate' | 'weak';
+  context?: string;
+}
+
+export interface Objection {
+  objection: string;
+  date?: string;
+  status: 'addressed' | 'unresolved' | 'partially_addressed';
+  resolution?: string | null;
+}
+
+export interface DealPrediction {
+  likelihood_to_close: number;
+  estimated_close_timeframe?: string;
+  confidence: number;
+  key_factors?: string[];
+  risks_to_close?: string[];
+}
+
+export interface HubSpotHistoryResponse {
+  engagements: HubSpotEngagement[];
+  summary: {
+    total: number;
+    fetched: number;
+    by_type: Record<string, number>;
+    time_span_days: number;
+    first_engagement: string | null;
+    last_engagement: string | null;
+  };
+}
+
+export interface HubSpotEngagement {
+  id: string;
+  type: string;
+  timestamp: number | null;
+  created_at: string | null;
+  metadata: HubSpotEngagementMetadata;
+}
+
+export interface HubSpotEngagementMetadata {
+  subject?: string | null;
+  from?: string | null;
+  to?: string[];
+  text?: string | null;
+  body?: string | null;
+  title?: string | null;
+  duration_seconds?: number | null;
+  status?: string | null;
 }
 
 export interface Integration {

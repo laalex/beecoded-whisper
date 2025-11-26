@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { leadsApi } from '@/services/leads';
-import type { Lead, LeadStatus, InteractionType } from '@/types';
+import type { Lead, LeadStatus, InteractionType, AiAnalysis } from '@/types';
 
 export function useLead(id: number | string) {
   const queryClient = useQueryClient();
@@ -9,6 +9,14 @@ export function useLead(id: number | string) {
     queryKey: ['lead', id],
     queryFn: () => leadsApi.getLead(id),
     enabled: !!id,
+  });
+
+  // Fetch history analysis separately (it's not included in lead response)
+  const historyAnalysisQuery = useQuery({
+    queryKey: ['lead', id, 'history-analysis'],
+    queryFn: () => leadsApi.getHistoryAnalysis(id),
+    enabled: !!id && query.data?.source === 'hubspot',
+    retry: false, // Don't retry 404s
   });
 
   const updateMutation = useMutation({
@@ -90,8 +98,17 @@ export function useLead(id: number | string) {
     },
   });
 
+  const analyzeHistoryMutation = useMutation({
+    mutationFn: () => leadsApi.analyzeHistory(id),
+    onSuccess: (data: AiAnalysis) => {
+      queryClient.setQueryData(['lead', id, 'history-analysis'], data);
+      queryClient.invalidateQueries({ queryKey: ['lead', id] });
+    },
+  });
+
   return {
     lead: query.data,
+    historyAnalysis: historyAnalysisQuery.data,
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,
@@ -100,9 +117,11 @@ export function useLead(id: number | string) {
     addInteraction: addInteractionMutation.mutate,
     syncHubSpot: syncHubSpotMutation.mutate,
     analyzeLead: analyzeMutation.mutate,
+    analyzeHistory: analyzeHistoryMutation.mutate,
     isUpdating: updateMutation.isPending || updateStatusMutation.isPending,
     isAddingInteraction: addInteractionMutation.isPending,
     isSyncing: syncHubSpotMutation.isPending,
     isAnalyzing: analyzeMutation.isPending,
+    isAnalyzingHistory: analyzeHistoryMutation.isPending,
   };
 }

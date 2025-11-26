@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AiAnalysis;
 use App\Models\Lead;
 use App\Services\AI\LeadAnalysisService;
+use App\Services\AI\LeadHistoryAnalysisService;
 use App\Services\HubSpot\HubSpotSyncService;
+use App\Services\HubSpot\LeadHistoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -13,7 +16,9 @@ class LeadController extends Controller
 {
     public function __construct(
         private HubSpotSyncService $hubSpotSync,
-        private LeadAnalysisService $analysisService
+        private LeadAnalysisService $analysisService,
+        private LeadHistoryService $historyService,
+        private LeadHistoryAnalysisService $historyAnalysisService
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -207,6 +212,64 @@ class LeadController extends Controller
             'message' => 'Analysis completed',
             'analysis' => $analysis,
         ]);
+    }
+
+    /**
+     * Fetch complete HubSpot engagement history for a lead
+     */
+    public function hubspotHistory(Request $request, Lead $lead): JsonResponse
+    {
+        $this->authorizeLeadAccess($lead);
+
+        if (!$lead->external_id) {
+            return response()->json([
+                'message' => 'Lead is not linked to HubSpot'
+            ], 400);
+        }
+
+        try {
+            $limit = $request->get('limit', 100);
+            $history = $this->historyService->fetchCompleteHistory($lead, $limit);
+
+            return response()->json($history);
+        } catch (\RuntimeException $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Perform AI analysis on lead's HubSpot history
+     */
+    public function analyzeHistory(Lead $lead): JsonResponse
+    {
+        $this->authorizeLeadAccess($lead);
+
+        $analysis = $this->historyAnalysisService->analyzeHistory($lead);
+
+        return response()->json($analysis);
+    }
+
+    /**
+     * Get the latest history analysis for a lead
+     */
+    public function getHistoryAnalysis(Lead $lead): JsonResponse
+    {
+        $this->authorizeLeadAccess($lead);
+
+        $analysis = AiAnalysis::where('lead_id', $lead->id)
+            ->where('analysis_type', 'history')
+            ->latest('analyzed_at')
+            ->first();
+
+        if (!$analysis) {
+            return response()->json([
+                'message' => 'No history analysis found'
+            ], 404);
+        }
+
+        return response()->json($analysis);
     }
 
     private function authorizeLeadAccess(Lead $lead): void
