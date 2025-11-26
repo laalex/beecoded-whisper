@@ -223,6 +223,7 @@ Read these before any task:
 - [x] AI-powered lead analysis using Anthropic Claude API
 - [x] Complete HubSpot engagement history pull
 - [x] AI-powered history analysis with pattern detection, buying signals, deal prediction
+- [x] HubSpot background sync (15-minute scheduled job for new contacts)
 
 ### In Progress
 - [ ] Voice input functionality
