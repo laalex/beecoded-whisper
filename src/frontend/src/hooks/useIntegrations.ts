@@ -44,7 +44,10 @@ export function useSyncIntegration() {
   return useMutation({
     mutationFn: (integrationId: number) => integrationsApi.sync(integrationId),
     onSuccess: () => {
+      // Invalidate all related queries after sync
       queryClient.invalidateQueries({ queryKey: ['integrations'] });
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }

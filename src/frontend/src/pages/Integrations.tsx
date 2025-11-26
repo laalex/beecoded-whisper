@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   useIntegrations,
   useConnectHubSpot,
@@ -13,7 +14,8 @@ import { Card, CardContent } from '@/components/common/Card';
 import { AlertCircle, Link as LinkIcon } from 'lucide-react';
 
 export function Integrations() {
-  const { data: integrations, isLoading, error, refetch } = useIntegrations();
+  const queryClient = useQueryClient();
+  const { data: integrations, isLoading, error } = useIntegrations();
 
   const connectHubSpot = useConnectHubSpot();
   const connectGmail = useConnectGmail();
@@ -23,17 +25,23 @@ export function Integrations() {
   const hubspotIntegration = useIntegrationByProvider(integrations, 'hubspot');
   const gmailIntegration = useIntegrationByProvider(integrations, 'gmail');
 
+  const invalidateAllQueries = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['integrations'] });
+    queryClient.invalidateQueries({ queryKey: ['leads'] });
+    queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+  }, [queryClient]);
+
   // Listen for OAuth popup messages
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'oauth_success') {
-        refetch();
+        invalidateAllQueries();
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [refetch]);
+  }, [invalidateAllQueries]);
 
   const handleConnectHubSpot = useCallback(async () => {
     try {
@@ -45,13 +53,13 @@ export function Integrations() {
       const pollTimer = setInterval(() => {
         if (popup?.closed) {
           clearInterval(pollTimer);
-          refetch();
+          invalidateAllQueries();
         }
       }, 1000);
     } catch (err) {
       console.error('Failed to connect HubSpot:', err);
     }
-  }, [connectHubSpot, refetch]);
+  }, [connectHubSpot, invalidateAllQueries]);
 
   const handleConnectGmail = useCallback(async () => {
     try {
@@ -61,13 +69,13 @@ export function Integrations() {
       const pollTimer = setInterval(() => {
         if (popup?.closed) {
           clearInterval(pollTimer);
-          refetch();
+          invalidateAllQueries();
         }
       }, 1000);
     } catch (err) {
       console.error('Failed to connect Gmail:', err);
     }
-  }, [connectGmail, refetch]);
+  }, [connectGmail, invalidateAllQueries]);
 
   const handleSync = useCallback(
     (integrationId: number) => {
