@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
+// OAuth callbacks (must be outside auth middleware - called by external providers)
+Route::get('/integrations/hubspot/callback', [IntegrationController::class, 'hubSpotCallback']);
+Route::get('/integrations/gmail/callback', [IntegrationController::class, 'gmailCallback']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
@@ -46,9 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Integrations
     Route::get('/integrations', [IntegrationController::class, 'index']);
     Route::post('/integrations/hubspot/connect', [IntegrationController::class, 'connectHubSpot']);
-    Route::get('/integrations/hubspot/callback', [IntegrationController::class, 'hubSpotCallback']);
     Route::post('/integrations/gmail/connect', [IntegrationController::class, 'connectGmail']);
-    Route::get('/integrations/gmail/callback', [IntegrationController::class, 'gmailCallback']);
     Route::delete('/integrations/{integration}', [IntegrationController::class, 'destroy']);
     Route::post('/integrations/{integration}/sync', [IntegrationController::class, 'sync']);
 

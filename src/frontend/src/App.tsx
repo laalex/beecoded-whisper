@@ -7,6 +7,7 @@ import { Login } from '@/pages/Login';
 import { Register } from '@/pages/Register';
 import { Dashboard } from '@/pages/Dashboard';
 import { Leads } from '@/pages/Leads';
+import { Integrations } from '@/pages/Integrations';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,7 +39,7 @@ function AppContent() {
         <Route path="reminders" element={<div>Reminders (Coming Soon)</div>} />
         <Route path="offers" element={<div>Offers (Coming Soon)</div>} />
         <Route path="voice" element={<div>Voice Input (Coming Soon)</div>} />
-        <Route path="integrations" element={<div>Integrations (Coming Soon)</div>} />
+        <Route path="integrations" element={<Integrations />} />
         <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
       </Route>
     </Routes>
