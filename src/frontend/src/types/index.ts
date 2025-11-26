@@ -329,10 +329,17 @@ export interface HubSpotEngagement {
   metadata: HubSpotEngagementMetadata;
 }
 
+export interface HubSpotEmailParticipant {
+  raw?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export interface HubSpotEngagementMetadata {
   subject?: string | null;
-  from?: string | null;
-  to?: string[];
+  from?: string | HubSpotEmailParticipant | null;
+  to?: (string | HubSpotEmailParticipant)[];
   text?: string | null;
   body?: string | null;
   title?: string | null;

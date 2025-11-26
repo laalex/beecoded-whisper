@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/common/Card';
 import { Badge } from '@/components/common/Badge';
 import Button from '@/components/common/Button';
-import type { AiAnalysis, HistoryAnalysisInsights } from '@/types';
+import { EngagementDetailsModal } from './EngagementDetailsModal';
+import type { AiAnalysis, HistoryAnalysisInsights, HubSpotEngagement } from '@/types';
 import {
   History,
   RefreshCw,
@@ -23,6 +25,7 @@ interface LeadHistoryAnalysisProps {
   onAnalyze?: () => void;
   isAnalyzing?: boolean;
   hasHubSpotData?: boolean;
+  engagements?: HubSpotEngagement[];
 }
 
 export function LeadHistoryAnalysis({
@@ -30,7 +33,13 @@ export function LeadHistoryAnalysis({
   onAnalyze,
   isAnalyzing,
   hasHubSpotData,
+  engagements = [],
 }: LeadHistoryAnalysisProps) {
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+
+  const filteredEngagements = selectedType
+    ? engagements.filter((e) => e.type.toLowerCase() === selectedType.toLowerCase())
+    : [];
   if (!analysis || analysis.analysis_type !== 'history') {
     return (
       <Card>
@@ -146,9 +155,15 @@ export function LeadHistoryAnalysis({
             </p>
             <div className="flex flex-wrap gap-2">
               {Object.entries(histSummary.engagement_types_breakdown).map(([type, count]) => (
-                <Badge key={type} variant="default" className="capitalize">
-                  {type}: {count}
-                </Badge>
+                <button
+                  key={type}
+                  onClick={() => setSelectedType(type)}
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                >
+                  <Badge variant="default" className="capitalize">
+                    {type}: {count}
+                  </Badge>
+                </button>
               ))}
             </div>
           </div>
@@ -399,6 +414,13 @@ export function LeadHistoryAnalysis({
           </div>
         )}
       </CardContent>
+
+      <EngagementDetailsModal
+        isOpen={selectedType !== null}
+        onClose={() => setSelectedType(null)}
+        engagementType={selectedType || ''}
+        engagements={filteredEngagements}
+      />
     </Card>
   );
 }

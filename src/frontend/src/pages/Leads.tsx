@@ -24,13 +24,26 @@ const statusColors: Record<string, 'default' | 'success' | 'warning' | 'danger' 
 export function Leads() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
+  const [page, setPage] = useState(1);
+
+  // Reset to page 1 when filters change
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleStatusChange = (value: string) => {
+    setStatus(value);
+    setPage(1);
+  };
 
   const { data, isLoading } = useQuery<PaginatedResponse<Lead>>({
-    queryKey: ['leads', search, status],
+    queryKey: ['leads', search, status, page],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
       if (status) params.append('status', status);
+      params.append('page', page.toString());
       const response = await api.get('/leads?' + params.toString());
       return response.data;
     },
@@ -69,14 +82,14 @@ export function Leads() {
             placeholder="Search leads..."
             icon={<Search className="w-4 h-4" />}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="h-9"
           />
         </div>
         <select
           className="px-3 py-2 text-sm border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => handleStatusChange(e.target.value)}
         >
           <option value="">All Status</option>
           <option value="new">New</option>
@@ -169,22 +182,30 @@ export function Leads() {
         </div>
       )}
 
-      {data && data.total > data.per_page && (
+      {data && data.last_page > 1 && (
         <div className="flex items-center justify-between text-sm text-text-secondary">
           <span>
-            Showing {data.data.length} of {data.total} leads
+            Page {data.current_page} of {data.last_page} ({data.total} leads)
           </span>
           <div className="flex gap-2">
-            {data.current_page > 1 && (
-              <Button variant="ghost" size="sm" className="cursor-pointer">
-                Previous
-              </Button>
-            )}
-            {data.current_page < data.last_page && (
-              <Button variant="ghost" size="sm" className="cursor-pointer">
-                Next
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="cursor-pointer"
+              disabled={data.current_page <= 1}
+              onClick={() => setPage(data.current_page - 1)}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="cursor-pointer"
+              disabled={data.current_page >= data.last_page}
+              onClick={() => setPage(data.current_page + 1)}
+            >
+              Next
+            </Button>
           </div>
         </div>
       )}

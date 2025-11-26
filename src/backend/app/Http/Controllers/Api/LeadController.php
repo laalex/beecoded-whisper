@@ -99,9 +99,12 @@ class LeadController extends Controller
             $lead->refresh();
         }
 
-        // Get or generate AI analysis if stale (15 minutes)
-        $this->analysisService->analyzeLeadIfStale($lead);
-        $lead->refresh();
+        // AI analysis is persisted in DB - only auto-generate if none exists
+        // Users can manually re-analyze via the analyze endpoint
+        if (!$lead->aiAnalysis) {
+            $this->analysisService->analyzeLead($lead);
+            $lead->refresh();
+        }
 
         return response()->json(
             $lead->load([

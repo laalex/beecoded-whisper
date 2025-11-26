@@ -20,11 +20,23 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  const { fetchUser, isAuthenticated } = useAuthStore();
+  const { fetchUser, isAuthenticated, isInitialized } = useAuthStore();
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  // Show loading state until we know the authentication status
+  if (!isInitialized) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-surface">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+          <p className="text-text-secondary text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Routes>

@@ -25,6 +25,7 @@ export function LeadDetail() {
   const {
     lead,
     historyAnalysis,
+    hubspotHistory,
     isLoading,
     isError,
     updateLead,
@@ -205,6 +206,7 @@ export function LeadDetail() {
               onAnalyze={analyzeHistory}
               isAnalyzing={isAnalyzingHistory}
               hasHubSpotData={!!lead.enrichment_data?.hubspot_activities?.length}
+              engagements={hubspotHistory?.engagements}
             />
           )}
           <LeadTimeline interactions={lead.interactions || []} />

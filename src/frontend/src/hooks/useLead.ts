@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { leadsApi } from '@/services/leads';
-import type { Lead, LeadStatus, InteractionType, AiAnalysis } from '@/types';
+import type { Lead, LeadStatus, InteractionType, AiAnalysis, HubSpotHistoryResponse } from '@/types';
 
 export function useLead(id: number | string) {
   const queryClient = useQueryClient();
@@ -17,6 +17,14 @@ export function useLead(id: number | string) {
     queryFn: () => leadsApi.getHistoryAnalysis(id),
     enabled: !!id && query.data?.source === 'hubspot',
     retry: false, // Don't retry 404s
+  });
+
+  // Fetch HubSpot engagement history
+  const hubspotHistoryQuery = useQuery<HubSpotHistoryResponse>({
+    queryKey: ['lead', id, 'hubspot-history'],
+    queryFn: () => leadsApi.getHubSpotHistory(id),
+    enabled: !!id && query.data?.source === 'hubspot',
+    retry: false,
   });
 
   const updateMutation = useMutation({
@@ -109,6 +117,7 @@ export function useLead(id: number | string) {
   return {
     lead: query.data,
     historyAnalysis: historyAnalysisQuery.data,
+    hubspotHistory: hubspotHistoryQuery.data,
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,

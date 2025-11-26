@@ -58,6 +58,7 @@ services:
       - "5440:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/development/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql
     networks:
       - whisper-network
 

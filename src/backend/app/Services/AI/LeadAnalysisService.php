@@ -12,17 +12,24 @@ class LeadAnalysisService
         private PromptLoader $promptLoader
     ) {}
 
-    public function analyzeLeadIfStale(Lead $lead, int $staleMinutes = 15): ?AiAnalysis
+    /**
+     * Get existing analysis or generate new one if none exists.
+     * Does NOT auto-regenerate stale analyses - user must explicitly request.
+     */
+    public function getOrCreateAnalysis(Lead $lead): ?AiAnalysis
     {
         $existingAnalysis = $lead->aiAnalysis;
 
-        if ($existingAnalysis && !$existingAnalysis->isStale($staleMinutes)) {
+        if ($existingAnalysis) {
             return $existingAnalysis;
         }
 
         return $this->analyzeLead($lead);
     }
 
+    /**
+     * Force a new analysis (for explicit user requests)
+     */
     public function analyzeLead(Lead $lead): ?AiAnalysis
     {
         $context = $this->buildContext($lead);
