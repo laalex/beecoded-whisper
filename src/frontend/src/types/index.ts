@@ -31,6 +31,7 @@ export interface Lead {
   website: string | null;
   linkedin_url: string | null;
   status: LeadStatus;
+  is_vip: boolean;
   estimated_value: number | null;
   score: number;
   tags: string[] | null;

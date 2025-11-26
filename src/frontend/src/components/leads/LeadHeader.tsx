@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import type { Lead, LeadStatus } from '@/types';
-import { ArrowLeft, Edit2, Trash2, Phone, Mail, MessageSquare, Bell } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Phone, Mail, MessageSquare, Bell, Crown } from 'lucide-react';
 
 interface LeadHeaderProps {
   lead: Lead;
   onStatusChange: (status: LeadStatus) => void;
+  onVipToggle: () => void;
   onQuickAction: (action: 'call' | 'email' | 'note' | 'reminder') => void;
   isUpdating?: boolean;
 }
@@ -26,7 +27,7 @@ const statuses: LeadStatus[] = [
   'new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost', 'dormant'
 ];
 
-export function LeadHeader({ lead, onStatusChange, onQuickAction, isUpdating }: LeadHeaderProps) {
+export function LeadHeader({ lead, onStatusChange, onVipToggle, onQuickAction, isUpdating }: LeadHeaderProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -55,9 +56,23 @@ export function LeadHeader({ lead, onStatusChange, onQuickAction, isUpdating }: 
             {lead.last_name?.charAt(0) || ''}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text">
-              {lead.first_name} {lead.last_name}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-text">
+                {lead.first_name} {lead.last_name}
+              </h1>
+              <button
+                onClick={onVipToggle}
+                disabled={isUpdating}
+                className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                  lead.is_vip
+                    ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                    : 'bg-surface text-text-secondary hover:bg-gray-200 hover:text-yellow-600'
+                } disabled:opacity-50`}
+                title={lead.is_vip ? 'Remove VIP status' : 'Mark as VIP'}
+              >
+                <Crown className={`w-5 h-5 ${lead.is_vip ? 'fill-yellow-400' : ''}`} />
+              </button>
+            </div>
             <p className="text-text-secondary">
               {lead.company && <span>{lead.company}</span>}
               {lead.company && lead.job_title && <span className="mx-2">·</span>}

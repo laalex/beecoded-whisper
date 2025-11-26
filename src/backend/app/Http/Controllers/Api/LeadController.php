@@ -52,6 +52,10 @@ class LeadController extends Controller
             $query->where('score', '>=', $request->min_score);
         }
 
+        if ($request->filled('is_vip')) {
+            $query->where('is_vip', filter_var($request->is_vip, FILTER_VALIDATE_BOOLEAN));
+        }
+
         $sortField = $request->get('sort', 'created_at');
         $sortDir = $request->get('direction', 'desc');
         $query->orderBy($sortField, $sortDir);
@@ -133,6 +137,7 @@ class LeadController extends Controller
             'website' => 'nullable|url|max:255',
             'linkedin_url' => 'nullable|url|max:255',
             'status' => 'nullable|in:new,contacted,qualified,proposal,negotiation,won,lost,dormant',
+            'is_vip' => 'nullable|boolean',
             'estimated_value' => 'nullable|numeric|min:0',
             'tags' => 'nullable|array',
             'custom_fields' => 'nullable|array',

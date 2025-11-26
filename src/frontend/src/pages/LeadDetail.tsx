@@ -181,6 +181,10 @@ export function LeadDetail() {
     updateLead({ notes });
   };
 
+  const handleVipToggle = () => {
+    updateLead({ is_vip: !lead.is_vip });
+  };
+
   const isHubSpotLead = lead.source === 'hubspot' && lead.external_id;
 
   return (
@@ -188,6 +192,7 @@ export function LeadDetail() {
       <LeadHeader
         lead={lead}
         onStatusChange={handleStatusChange}
+        onVipToggle={handleVipToggle}
         onQuickAction={handleQuickAction}
         isUpdating={isUpdating}
       />

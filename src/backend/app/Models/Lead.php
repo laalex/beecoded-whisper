@@ -27,6 +27,7 @@ class Lead extends Model
         'website',
         'linkedin_url',
         'status',
+        'is_vip',
         'estimated_value',
         'score',
         'tags',
@@ -41,6 +42,7 @@ class Lead extends Model
         return [
             'tags' => 'array',
             'custom_fields' => 'array',
+            'is_vip' => 'boolean',
             'estimated_value' => 'decimal:2',
             'last_contacted_at' => 'datetime',
             'next_followup_at' => 'datetime',

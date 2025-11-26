@@ -7,7 +7,7 @@ import Input from '@/components/common/Input';
 import { Skeleton } from '@/components/common/Skeleton';
 import api from '@/services/api';
 import type { Lead, PaginatedResponse } from '@/types';
-import { Search, Plus, ChevronRight, User, TrendingUp } from 'lucide-react';
+import { Search, Plus, ChevronRight, User, TrendingUp, Crown } from 'lucide-react';
 import { format } from 'date-fns';
 
 const statusColors: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
@@ -24,6 +24,7 @@ const statusColors: Record<string, 'default' | 'success' | 'warning' | 'danger' 
 export function Leads() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
+  const [vipFilter, setVipFilter] = useState<'all' | 'vip' | 'non-vip'>('all');
   const [page, setPage] = useState(1);
 
   // Reset to page 1 when filters change
@@ -37,12 +38,19 @@ export function Leads() {
     setPage(1);
   };
 
+  const handleVipFilterChange = (value: 'all' | 'vip' | 'non-vip') => {
+    setVipFilter(value);
+    setPage(1);
+  };
+
   const { data, isLoading } = useQuery<PaginatedResponse<Lead>>({
-    queryKey: ['leads', search, status, page],
+    queryKey: ['leads', search, status, vipFilter, page],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
       if (status) params.append('status', status);
+      if (vipFilter === 'vip') params.append('is_vip', 'true');
+      if (vipFilter === 'non-vip') params.append('is_vip', 'false');
       params.append('page', page.toString());
       const response = await api.get('/leads?' + params.toString());
       return response.data;
@@ -100,6 +108,18 @@ export function Leads() {
           <option value="won">Won</option>
           <option value="lost">Lost</option>
         </select>
+        <button
+          onClick={() => handleVipFilterChange(vipFilter === 'vip' ? 'all' : 'vip')}
+          className={`flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg transition-colors cursor-pointer ${
+            vipFilter === 'vip'
+              ? 'bg-yellow-100 border-yellow-300 text-yellow-700'
+              : 'bg-background border-border text-text-secondary hover:border-yellow-300 hover:text-yellow-600'
+          }`}
+          title={vipFilter === 'vip' ? 'Show all leads' : 'Show VIP only'}
+        >
+          <Crown className={`w-4 h-4 ${vipFilter === 'vip' ? 'fill-yellow-400' : ''}`} />
+          VIP
+        </button>
       </div>
 
       {isLoading ? (
@@ -142,9 +162,14 @@ export function Leads() {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-text truncate">
-                    {lead.first_name} {lead.last_name}
-                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm font-medium text-text truncate">
+                      {lead.first_name} {lead.last_name}
+                    </p>
+                    {lead.is_vip && (
+                      <Crown className="w-4 h-4 text-yellow-500 fill-yellow-400 flex-shrink-0" />
+                    )}
+                  </div>
                   <p className="text-xs text-text-secondary truncate">
                     {lead.company || 'No company'}{lead.job_title ? ` · ${lead.job_title}` : ''}
                   </p>
