@@ -13,6 +13,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { Logo } from '@/components/common/Logo';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -32,10 +33,8 @@ export function Sidebar() {
   return (
     <div className="flex flex-col h-full w-64 bg-primary text-white">
       {/* Logo */}
-      <div className="flex items-center h-16 px-6 border-b border-primary-light">
-        <span className="text-xl font-bold">
-          <span className="text-accent">Bee</span> Coded Whisper
-        </span>
+      <div className="flex items-center h-16 px-4 border-b border-primary-light">
+        <Logo size="sm" variant="dark" />
       </div>
 
       {/* Navigation */}

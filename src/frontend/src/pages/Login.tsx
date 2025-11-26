@@ -8,6 +8,7 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { Card, CardContent } from '@/components/common/Card';
 import { Mail, Lock } from 'lucide-react';
+import { Logo } from '@/components/common/Logo';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -38,10 +39,8 @@ export function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary">
-            <span className="text-accent">Bee</span> Coded Whisper
-          </h1>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <Logo size="lg" />
           <p className="mt-2 text-text-secondary">Sales Intelligence Platform</p>
         </div>
 
