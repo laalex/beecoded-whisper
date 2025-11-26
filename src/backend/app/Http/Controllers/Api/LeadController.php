@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
+use App\Services\AI\LeadAnalysisService;
+use App\Services\HubSpot\HubSpotSyncService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
+    public function __construct(
+        private HubSpotSyncService $hubSpotSync,
+        private LeadAnalysisService $analysisService
+    ) {}
+
     public function index(Request $request): JsonResponse
     {
         $query = Lead::with(['assignee', 'scoreDetails']);
@@ -81,8 +88,26 @@ class LeadController extends Controller
     {
         $this->authorizeLeadAccess($lead);
 
+        // Auto-sync HubSpot data if stale (30 minutes)
+        if ($lead->source === 'hubspot' && $lead->external_id) {
+            $this->hubSpotSync->syncLeadIfStale($lead);
+            $lead->refresh();
+        }
+
+        // Get or generate AI analysis if stale (15 minutes)
+        $this->analysisService->analyzeLeadIfStale($lead);
+        $lead->refresh();
+
         return response()->json(
-            $lead->load(['assignee', 'interactions', 'offers', 'scoreDetails', 'enrichmentData', 'reminders'])
+            $lead->load([
+                'assignee',
+                'interactions.user',
+                'offers',
+                'scoreDetails',
+                'enrichmentData',
+                'reminders',
+                'aiAnalysis'
+            ])
         );
     }
 
@@ -151,6 +176,37 @@ class LeadController extends Controller
             ->get();
 
         return response()->json($similar);
+    }
+
+    public function sync(Lead $lead): JsonResponse
+    {
+        $this->authorizeLeadAccess($lead);
+
+        if ($lead->source !== 'hubspot' || !$lead->external_id) {
+            return response()->json([
+                'message' => 'Lead is not synced with HubSpot'
+            ], 400);
+        }
+
+        $enrichment = $this->hubSpotSync->syncLead($lead);
+
+        return response()->json([
+            'message' => 'Sync completed',
+            'enrichment_data' => $enrichment,
+            'sync_error' => $enrichment?->sync_error,
+        ]);
+    }
+
+    public function analyze(Lead $lead): JsonResponse
+    {
+        $this->authorizeLeadAccess($lead);
+
+        $analysis = $this->analysisService->analyzeLead($lead);
+
+        return response()->json([
+            'message' => 'Analysis completed',
+            'analysis' => $analysis,
+        ]);
     }
 
     private function authorizeLeadAccess(Lead $lead): void

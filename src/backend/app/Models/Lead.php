@@ -87,6 +87,16 @@ class Lead extends Model
         return $this->hasOne(LeadScore::class);
     }
 
+    public function aiAnalysis(): HasOne
+    {
+        return $this->hasOne(AiAnalysis::class)->where('analysis_type', 'full')->latest('analyzed_at');
+    }
+
+    public function aiAnalyses(): HasMany
+    {
+        return $this->hasMany(AiAnalysis::class);
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->last_name}");

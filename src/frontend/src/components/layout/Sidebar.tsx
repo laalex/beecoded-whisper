@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   Users,
   Mail,
-  Calendar,
   FileText,
   Settings,
   Mic,

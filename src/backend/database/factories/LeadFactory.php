@@ -29,7 +29,7 @@ class LeadFactory extends Factory
         ];
     }
 
-    public function new(): static
+    public function statusNew(): static
     {
         return $this->state(fn () => ['status' => 'new']);
     }

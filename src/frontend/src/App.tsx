@@ -7,6 +7,7 @@ import { Login } from '@/pages/Login';
 import { Register } from '@/pages/Register';
 import { Dashboard } from '@/pages/Dashboard';
 import { Leads } from '@/pages/Leads';
+import { LeadDetail } from '@/pages/LeadDetail';
 import { Integrations } from '@/pages/Integrations';
 
 const queryClient = new QueryClient({
@@ -33,8 +34,8 @@ function AppContent() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="leads" element={<Leads />} />
-        <Route path="leads/:id" element={<div>Lead Detail (Coming Soon)</div>} />
         <Route path="leads/new" element={<div>New Lead (Coming Soon)</div>} />
+        <Route path="leads/:id" element={<LeadDetail />} />
         <Route path="sequences" element={<div>Sequences (Coming Soon)</div>} />
         <Route path="reminders" element={<div>Reminders (Coming Soon)</div>} />
         <Route path="offers" element={<div>Offers (Coming Soon)</div>} />

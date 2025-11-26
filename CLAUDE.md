@@ -217,9 +217,12 @@ Read these before any task:
 - [x] Dashboard page
 - [x] Leads management page
 - [x] Feature tests for Auth and Leads
+- [x] Lead detail page (with interactions, reminders, offers, score breakdown)
+- [x] HubSpot/Gmail OAuth frontend integration
+- [x] HubSpot data auto-sync with 30-minute cache
+- [x] AI-powered lead analysis using Anthropic Claude API
 
 ### In Progress
-- [ ] Complete remaining frontend pages
 - [ ] Voice input functionality
 - [ ] Offer generation
 

@@ -34,6 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('leads', LeadController::class);
     Route::get('/leads/{lead}/history', [LeadController::class, 'history']);
     Route::get('/leads/{lead}/similar', [LeadController::class, 'similar']);
+    Route::post('/leads/{lead}/sync', [LeadController::class, 'sync']);
+    Route::post('/leads/{lead}/analyze', [LeadController::class, 'analyze']);
 
     // Interactions
     Route::apiResource('interactions', InteractionController::class);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import { Badge } from '@/components/common/Badge';
-import { RefreshCw, Unlink, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react';
+import { RefreshCw, Unlink, ExternalLink, CheckCircle } from 'lucide-react';
 import type { Integration } from '@/types';
 
 interface IntegrationCardProps {

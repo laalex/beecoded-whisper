@@ -42,6 +42,11 @@ export interface Lead {
   updated_at: string;
   assignee?: User;
   score_details?: LeadScore;
+  interactions?: Interaction[];
+  reminders?: Reminder[];
+  offers?: Offer[];
+  enrichment_data?: EnrichmentData;
+  ai_analysis?: AiAnalysis;
 }
 
 export type LeadStatus = 
@@ -116,6 +121,112 @@ export type ReminderType =
   | 'call' 
   | 'email' 
   | 'custom';
+
+export interface Offer {
+  id: number;
+  lead_id: number;
+  user_id: number;
+  title: string;
+  description: string | null;
+  amount: number;
+  currency: string;
+  status: OfferStatus;
+  valid_until: string | null;
+  sent_at: string | null;
+  viewed_at: string | null;
+  responded_at: string | null;
+  created_at: string;
+}
+
+export type OfferStatus =
+  | 'draft'
+  | 'sent'
+  | 'viewed'
+  | 'accepted'
+  | 'rejected'
+  | 'expired';
+
+export interface EnrichmentData {
+  id: number;
+  lead_id: number;
+  provider: string;
+  company_data: Record<string, unknown> | null;
+  contact_data: Record<string, unknown> | null;
+  industry: string | null;
+  employee_count: number | null;
+  annual_revenue: number | null;
+  hubspot_lifecycle_stage: string | null;
+  hubspot_deals: HubSpotDeal[] | null;
+  hubspot_activities: HubSpotActivity[] | null;
+  hubspot_owner: HubSpotOwner | null;
+  last_synced_at: string | null;
+  sync_error: string | null;
+}
+
+export interface HubSpotDeal {
+  id: string;
+  name: string | null;
+  amount: number | null;
+  stage: string | null;
+  close_date: string | null;
+}
+
+export interface HubSpotActivity {
+  type: string;
+  timestamp: number;
+}
+
+export interface HubSpotOwner {
+  id: string;
+  email: string | null;
+  first_name: string | null;
+  last_name: string | null;
+}
+
+export interface AiAnalysis {
+  id: number;
+  lead_id: number;
+  analysis_type: 'full' | 'scoring' | 'nurturing' | 'sentiment';
+  insights: AiInsights | null;
+  recommendations: AiRecommendation[] | null;
+  risks: AiRisk[] | null;
+  opportunities: AiOpportunity[] | null;
+  confidence_score: number | null;
+  model_used: string;
+  analyzed_at: string | null;
+}
+
+export interface AiInsights {
+  summary: string;
+  engagement_level: 'high' | 'medium' | 'low';
+  engagement_trend: 'improving' | 'stable' | 'declining';
+  relationship_health: 'strong' | 'good' | 'fair' | 'weak';
+  deal_stage_fit: boolean;
+  key_interests: string[];
+  communication_preference: string;
+  best_contact_time: string;
+}
+
+export interface AiRecommendation {
+  action: string;
+  type: 'call' | 'email' | 'meeting' | 'task';
+  priority: 'high' | 'medium' | 'low';
+  timing: 'immediate' | 'this_week' | 'next_week';
+  rationale: string;
+}
+
+export interface AiRisk {
+  factor: string;
+  severity: 'high' | 'medium' | 'low';
+  description: string;
+  mitigation: string;
+}
+
+export interface AiOpportunity {
+  type: 'upsell' | 'cross_sell' | 'referral' | 'expansion';
+  description: string;
+  potential_value: string;
+}
 
 export interface Integration {
   id: number;
