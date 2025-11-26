@@ -10,6 +10,7 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
+        // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
@@ -37,16 +38,16 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
         // Admin - full access
-        $admin = Role::create(['name' => 'admin']);
-        $admin->givePermissionTo(Permission::all());
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $admin->syncPermissions(Permission::all());
 
         // Manager - can manage team and view all leads
-        $manager = Role::create(['name' => 'manager']);
-        $manager->givePermissionTo([
+        $manager = Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'web']);
+        $manager->syncPermissions([
             'leads.view', 'leads.view_all', 'leads.create', 'leads.update', 'leads.assign', 'leads.export',
             'interactions.view', 'interactions.create', 'interactions.update',
             'sequences.view', 'sequences.create', 'sequences.update', 'sequences.execute',
@@ -59,8 +60,8 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         // Sales Rep - can manage own leads
-        $salesRep = Role::create(['name' => 'sales_rep']);
-        $salesRep->givePermissionTo([
+        $salesRep = Role::firstOrCreate(['name' => 'sales_rep', 'guard_name' => 'web']);
+        $salesRep->syncPermissions([
             'leads.view', 'leads.create', 'leads.update',
             'interactions.view', 'interactions.create', 'interactions.update',
             'sequences.view', 'sequences.execute',
@@ -72,8 +73,8 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         // Viewer - read-only access
-        $viewer = Role::create(['name' => 'viewer']);
-        $viewer->givePermissionTo([
+        $viewer = Role::firstOrCreate(['name' => 'viewer', 'guard_name' => 'web']);
+        $viewer->syncPermissions([
             'leads.view',
             'interactions.view',
             'sequences.view',

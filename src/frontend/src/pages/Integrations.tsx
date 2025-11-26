@@ -8,6 +8,8 @@ import {
   useIntegrationByProvider,
 } from '@/hooks/useIntegrations';
 import { IntegrationCard } from '@/components/features/IntegrationCard';
+import { Skeleton } from '@/components/common/Skeleton';
+import { Card, CardContent } from '@/components/common/Card';
 import { AlertCircle, Link as LinkIcon } from 'lucide-react';
 
 export function Integrations() {
@@ -83,11 +85,29 @@ export function Integrations() {
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-40 bg-gray-200 rounded"></div>
-          <div className="h-40 bg-gray-200 rounded"></div>
+      <div className="p-6 space-y-6">
+        <div>
+          <Skeleton className="h-8 w-40 mb-2" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent>
+                <div className="flex items-start gap-4">
+                  <Skeleton className="w-14 h-14 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-4 w-48" />
+                  </div>
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                </div>
+                <div className="mt-4 pt-4 border-t border-border">
+                  <Skeleton className="h-9 w-32" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );

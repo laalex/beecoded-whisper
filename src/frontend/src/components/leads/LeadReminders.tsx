@@ -91,7 +91,7 @@ export function LeadReminders({ reminders, onComplete, onAddReminder }: LeadRemi
                 {onComplete && (
                   <button
                     onClick={() => onComplete(reminder.id)}
-                    className="flex-shrink-0 p-1 hover:bg-green-100 rounded transition-colors"
+                    className="flex-shrink-0 p-1 hover:bg-green-100 rounded transition-colors cursor-pointer"
                     title="Mark as complete"
                   >
                     <Check className="w-4 h-4 text-text-secondary hover:text-green-600" />

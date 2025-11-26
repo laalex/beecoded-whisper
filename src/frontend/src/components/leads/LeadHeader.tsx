@@ -32,7 +32,7 @@ export function LeadHeader({ lead, onStatusChange, onQuickAction, isUpdating }: 
       <div className="flex items-center justify-between">
         <Link
           to="/leads"
-          className="inline-flex items-center text-text-secondary hover:text-text transition-colors"
+          className="inline-flex items-center text-text-secondary hover:text-text transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Leads
@@ -71,7 +71,7 @@ export function LeadHeader({ lead, onStatusChange, onQuickAction, isUpdating }: 
             value={lead.status}
             onChange={(e) => onStatusChange(e.target.value as LeadStatus)}
             disabled={isUpdating}
-            className="px-3 py-2 border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 cursor-pointer"
           >
             {statuses.map((status) => (
               <option key={status} value={status}>

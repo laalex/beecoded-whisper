@@ -13,6 +13,8 @@ import {
   LeadHubSpotData,
   LeadAIAnalysis,
 } from '@/components/leads';
+import { Skeleton } from '@/components/common/Skeleton';
+import { Card, CardContent } from '@/components/common/Card';
 import type { InteractionType, LeadStatus } from '@/types';
 import { AlertCircle } from 'lucide-react';
 
@@ -42,16 +44,85 @@ export function LeadDetail() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-32 bg-surface rounded animate-pulse" />
-        <div className="h-24 bg-surface rounded-xl animate-pulse" />
+        {/* Header skeleton */}
+        <Card>
+          <CardContent className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Skeleton variant="circular" className="w-14 h-14" />
+              <div className="space-y-2">
+                <Skeleton className="h-6 w-40" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-20" />
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="h-48 bg-surface rounded-xl animate-pulse" />
-            <div className="h-64 bg-surface rounded-xl animate-pulse" />
+            {/* Contact info skeleton */}
+            <Card>
+              <CardContent className="space-y-4">
+                <Skeleton className="h-5 w-32 mb-4" />
+                <div className="grid grid-cols-2 gap-4">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="space-y-1">
+                      <Skeleton className="h-3 w-16" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            {/* Timeline skeleton */}
+            <Card>
+              <CardContent>
+                <Skeleton className="h-5 w-24 mb-4" />
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex gap-3 p-3 bg-surface rounded-lg">
+                      <Skeleton variant="circular" className="w-8 h-8 flex-shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
+
           <div className="space-y-6">
-            <div className="h-48 bg-surface rounded-xl animate-pulse" />
-            <div className="h-32 bg-surface rounded-xl animate-pulse" />
+            {/* Score card skeleton */}
+            <Card>
+              <CardContent className="text-center py-6">
+                <Skeleton className="h-5 w-20 mx-auto mb-4" />
+                <Skeleton variant="circular" className="w-24 h-24 mx-auto mb-4" />
+                <div className="space-y-2">
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-full" />
+                </div>
+              </CardContent>
+            </Card>
+            {/* Reminders skeleton */}
+            <Card>
+              <CardContent>
+                <Skeleton className="h-5 w-24 mb-4" />
+                <div className="space-y-2">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <div key={i} className="p-3 bg-surface rounded-lg">
+                      <Skeleton className="h-4 w-3/4 mb-1" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
@@ -68,7 +139,7 @@ export function LeadDetail() {
         </p>
         <button
           onClick={() => navigate('/leads')}
-          className="text-primary hover:underline"
+          className="text-primary hover:underline cursor-pointer"
         >
           Back to Leads
         </button>
